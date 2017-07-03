@@ -1,6 +1,8 @@
 package org.forten.si.dto;
 
+import org.forten.utils.security.SHA1Util;
 import org.forten.utils.system.Assert;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import java.util.Date;
@@ -15,6 +17,7 @@ public class Student4Save {
     private String email;
     private String tel;
     private String address;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
     private String eduBg;
 
@@ -99,7 +102,7 @@ public class Student4Save {
 
     public String getPassword(){
         Assert.hasText(this.idCardNum,"学生的证件号不能为空");
-        return this.idCardNum.substring(idCardNum.length()-6);
+        return SHA1Util.encryptSHA(this.idCardNum.substring(idCardNum.length()-6));
     }
 
     @Override

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery教程_唯实讲堂_www.ForTen.org</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+</head>
+<body>
+<button id="open-save-btn" type="button" class="btn btn-success">添加学生信息</button>
+
+<div id="save-dialog" title="新建学生信息">
+    <form id="save-form">
+        <div class="form-group">
+            <input class="form-control" id="name" name="name" placeholder="姓名" />
+        </div>
+        <div class="form-group">
+            <label class="radio-inline">
+                <input type="radio" name="gender" id="gender1" value="M"> 男
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="gender" id="gender2" value="F"> 女
+            </label>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="idCardNum" name="idCardNum" placeholder="身份证号" />
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="email" name="email" placeholder="Email" />
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="tel" name="tel" placeholder="电话" />
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="address" name="address" placeholder="地址" />
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="birthday" name="birthday" placeholder="生日" type="date" />
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="eduBg" name="eduBg" placeholder="学历" />
+        </div>
+    </form>
+</div>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/bootstrap.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/sha1.js"></script>
+<script src="../js/commons.js"></script>
+<script>
+    $(function () {
+        $('#open-save-btn').on('click',function(){
+            saveDialog.dialog('open');
+        });
+    });
+
+    var saveDialog = $('#save-dialog').dialog({
+        autoOpen:false,
+        modal:true,
+        width:450,
+        height:500,
+        buttons:[
+            {
+                text:"保存",
+                click:function(){
+                    var dataJson = $('#save-form').form2Json();
+                    $.ajax({
+                        url: 'save.do',// 请求的URL
+                        type: 'POST',// 请求提交的方式（默认为GET）
+                        contentType: 'application/json',// 向服务器请求的报文内容格式
+                        dataType: 'json',// 从服务器响应的报文内容格式
+                        data: dataJson// 向服务器提交的请求
+                    }).then(function(msgDto){
+                        alert(msgDto.message);
+                        $('#save-form').get(0).reset();
+                        $('#save-dialog').dialog('close');
+                    },function(jqXhr,status,errorMsg){
+                        alert(msgDto.message);
+                    });
+                }
+            },
+            {
+                text:"关闭",
+                click:function(){
+                    $('#save-form').get(0).reset();
+                    $('#save-dialog').dialog('close');
+                }
+            }
+        ]
+    });
+</script>
+</body>
+</html>
