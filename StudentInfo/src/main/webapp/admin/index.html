@@ -32,7 +32,32 @@
                 <th>注册时间</th>
             </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <tr><td class="text-center" colspan="11"><img src="../imgs/loading.gif" alt="Loading..." /></td></tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="text-right" colspan="11">
+                        <span class="col-lg-4">
+                            第<span id="pageNo-span"></span>页/共<span id="totalPageNo-span"></span>页
+                            第<span id="first-span"></span>条~第<span id="last-span"></span>条/共<span id="total-span"></span>条
+                        </span>
+                        <span class="col-lg-8">
+                            <span id="to-first-btn" class="btn">首页</span>
+                            <span id="to-pre-btn" class="btn">上一页</span>
+                            <span id="to-next-btn" class="btn">下一页</span>
+                            <span id="to-last-btn" class="btn">未页</span>
+                            <input id="pageNo" name="pageNo" value="1" form="search-form" />
+                            <select id="pageSize" name="pageSize" form="search-form">
+                                <option value="1">1</option>
+                                <option value="2" selected>2</option>
+                                <option value="5">5</option>
+                            </select>
+                            <button id="go-btn" type="button" class="btn">Go</button>
+                        </span>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
@@ -75,18 +100,56 @@
 <script src="../js/sha1.js"></script>
 <script src="../js/commons.js"></script>
 <script>
+    var totalPage = 0;
     $(function () {
+        list();
+
         $('#open-save-btn').on('click', function () {
             saveDialog.dialog('open');
         });
 
-        $('#search-btn').on('click', list);
-        list();
+        // 为查询按钮和页码跳转按钮同时绑定单击时的list函数
+        $('#search-btn').add('#go-btn').on('click', list);
+
+        $('#to-first-btn').on('click',function(){
+            // 设置表单中的页码值为1
+            $('#pageNo').val(1);
+            list();
+        });
+
+        $('#to-pre-btn').on('click',function(){
+            // 得到页码输入控件
+            var input = $('#pageNo');
+            // 得到页码当前值，转换为int，再减去1
+            var pNo = parseInt(input.val())-1;
+            if(pNo>0){
+                // 把新值设置到页码输入控件上
+                input.val(pNo);
+            }
+            // 进行查询
+            list();
+        });
+        $('#to-next-btn').on('click',function(){
+            var input = $('#pageNo');
+            // 得到页码当前值，转换为int，再加上1
+            var pNo = parseInt(input.val())+1;
+            if(pNo<=totalPage){
+                // 把新值设置到页码输入控件上
+                input.val(pNo);
+            }
+            // 进行查询
+            list();
+        });
+        $('#to-last-btn').on('click',function(){
+            // 设置表单中的页码值为总页数
+            $('#pageNo').val(totalPage);
+            list();
+        });
     });
 
     var list = function () {
         var formJson = $('#search-form').form2Json();
-        $('tbody','#data-area').empty();
+        $('tbody', '#data-area').empty();
         $.ajax({
             url: 'list.do',
             type: 'POST',
@@ -95,10 +158,11 @@
             data: formJson
         }).then(function (ro) {
             if (ro.emptyData) {
-                alert('未查询到符合条件的数据');
+                $('tbody', '#data-area').html('<tr><td colspan="11" class="text-center">未查询到符合条件的数据</td></tr>');
+                $('tfoot', '#data-area').hide();
             } else {
                 $.each(ro.dataList, function (index, stu) {
-                    $('tbody','#data-area').append("<tr><th><input type='checkbox' value='" + stu.id + "' /></th>" +
+                    $('tbody', '#data-area').append("<tr><th><input type='checkbox' value='" + stu.id + "' /></th>" +
                         "<td>" + stu.name + "</td>" +
                         "<td>" + stu.gender + "</td>" +
                         "<td>" + stu.idCardNum + "</td>" +
@@ -110,6 +174,13 @@
                         "<td>" + stu.status + "</td>" +
                         "<td>" + stu.registTime + "</td></tr>");
                 });
+                $('#pageNo-span').text(ro.page.pageNo);
+                $('#totalPageNo-span').text(ro.page.totalPage);
+                $('#first-span').text(ro.page.firstResultNum+1);
+                $('#last-span').text(ro.page.lastResultNum);
+                $('#total-span').text(ro.page.totalQuantity);
+                $('tfoot', '#data-area').show();
+                totalPage = ro.page.totalPage;
             }
         }, function (xhr, status, errorMsg) {
             alert(xhr.status);
