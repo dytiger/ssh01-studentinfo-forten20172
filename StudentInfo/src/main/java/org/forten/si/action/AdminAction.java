@@ -2,7 +2,10 @@ package org.forten.si.action;
 
 import org.forten.si.bo.StudentBo;
 import org.forten.si.dao.Message;
+import org.forten.si.dto.RoWithPage;
+import org.forten.si.dto.Student4List;
 import org.forten.si.dto.Student4Save;
+import org.forten.si.dto.StudentQo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +32,11 @@ public class AdminAction {
             e.printStackTrace();
             return new Message("学生信息保存失败");
         }
+    }
+
+    @RequestMapping("list")
+    public @ResponseBody
+    RoWithPage<Student4List> list(@RequestBody StudentQo qo){
+        return bo.queryBy(qo);
     }
 }

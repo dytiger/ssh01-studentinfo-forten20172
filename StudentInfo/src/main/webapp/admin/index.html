@@ -8,11 +8,38 @@
 </head>
 <body>
 <button id="open-save-btn" type="button" class="btn btn-success">添加学生信息</button>
-
+<div class="container">
+    <div class="row">
+        <form id="search-form">
+            <input name="name"/>
+            <button id="search-btn" type="button">查询</button>
+        </form>
+    </div>
+    <div id="data-area">
+        <table class='table'>
+            <thead>
+            <tr>
+                <th><input type='checkbox'/></th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>身份证</th>
+                <th>生日</th>
+                <th>Email</th>
+                <th>电话</th>
+                <th>地址</th>
+                <th>学历</th>
+                <th>状态</th>
+                <th>注册时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 <div id="save-dialog" title="新建学生信息">
     <form id="save-form">
         <div class="form-group">
-            <input class="form-control" id="name" name="name" placeholder="姓名" />
+            <input class="form-control" id="name" name="name" placeholder="姓名"/>
         </div>
         <div class="form-group">
             <label class="radio-inline">
@@ -23,22 +50,22 @@
             </label>
         </div>
         <div class="form-group">
-            <input class="form-control" id="idCardNum" name="idCardNum" placeholder="身份证号" />
+            <input class="form-control" id="idCardNum" name="idCardNum" placeholder="身份证号"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="email" name="email" placeholder="Email" />
+            <input class="form-control" id="email" name="email" placeholder="Email"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="tel" name="tel" placeholder="电话" />
+            <input class="form-control" id="tel" name="tel" placeholder="电话"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="address" name="address" placeholder="地址" />
+            <input class="form-control" id="address" name="address" placeholder="地址"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="birthday" name="birthday" placeholder="生日" type="date" />
+            <input class="form-control" id="birthday" name="birthday" placeholder="生日" type="date"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="eduBg" name="eduBg" placeholder="学历" />
+            <input class="form-control" id="eduBg" name="eduBg" placeholder="学历"/>
         </div>
     </form>
 </div>
@@ -49,16 +76,51 @@
 <script src="../js/commons.js"></script>
 <script>
     $(function () {
-        $('#open-save-btn').on('click',function(){
+        $('#open-save-btn').on('click', function () {
             saveDialog.dialog('open');
         });
+
+        $('#search-btn').on('click', list);
+        list();
     });
 
+    var list = function () {
+        var formJson = $('#search-form').form2Json();
+        $('tbody','#data-area').empty();
+        $.ajax({
+            url: 'list.do',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: formJson
+        }).then(function (ro) {
+            if (ro.emptyData) {
+                alert('未查询到符合条件的数据');
+            } else {
+                $.each(ro.dataList, function (index, stu) {
+                    $('tbody','#data-area').append("<tr><th><input type='checkbox' value='" + stu.id + "' /></th>" +
+                        "<td>" + stu.name + "</td>" +
+                        "<td>" + stu.gender + "</td>" +
+                        "<td>" + stu.idCardNum + "</td>" +
+                        "<td>" + stu.birthday + "</td>" +
+                        "<td>" + stu.email + "</td>" +
+                        "<td>" + stu.tel + "</td>" +
+                        "<td>" + stu.address + "</td>" +
+                        "<td>" + stu.eduBg + "</td>" +
+                        "<td>" + stu.status + "</td>" +
+                        "<td>" + stu.registTime + "</td></tr>");
+                });
+            }
+        }, function (xhr, status, errorMsg) {
+            alert(xhr.status);
+        });
+    };
+
     var saveDialog = $('#save-dialog').dialog({
-        autoOpen:false,
-        modal:true,
-        width:450,
-        height:500,
+        autoOpen: false,
+        modal: true,
+        width: 450,
+        height: 500,
         show: {
             effect: "fade",
             duration: 2000
@@ -67,10 +129,10 @@
             effect: "fade",
             duration: 2000
         },
-        buttons:[
+        buttons: [
             {
-                text:"保存",
-                click:function(){
+                text: "保存",
+                click: function () {
                     var dataJson = $('#save-form').form2Json();
                     $.ajax({
                         url: 'save.do',// 请求的URL
@@ -78,18 +140,18 @@
                         contentType: 'application/json',// 向服务器请求的报文内容格式
                         dataType: 'json',// 从服务器响应的报文内容格式
                         data: dataJson// 向服务器提交的请求
-                    }).then(function(msgDto){
+                    }).then(function (msgDto) {
                         alert(msgDto.message);
                         $('#save-form').get(0).reset();
                         $('#save-dialog').dialog('close');
-                    },function(jqXhr,status,errorMsg){
+                    }, function (jqXhr, status, errorMsg) {
                         alert(msgDto.message);
                     });
                 }
             },
             {
-                text:"关闭",
-                click:function(){
+                text: "关闭",
+                click: function () {
                     $('#save-form').get(0).reset();
                     $('#save-dialog').dialog('close');
                 }
