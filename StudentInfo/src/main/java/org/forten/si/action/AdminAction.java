@@ -36,7 +36,7 @@ public class AdminAction {
 
     @RequestMapping("list")
     public @ResponseBody
-    RoWithPage<Student4List> list(@RequestBody StudentQo qo) throws InterruptedException {
+    RoWithPage<Student4List> list(@RequestBody StudentQo qo) {
         return bo.queryBy(qo);
     }
 }
