@@ -61,4 +61,45 @@ public class StudentBo {
 
         return new RoWithPage<>(list,page);
     }
+
+    @Transactional(readOnly = true)
+    public RoWithPage<Student4List> queryBy2(StudentQo qo){
+        // 参数Map
+        Map<String,Object> params = new HashMap<>();
+        // 用于统计符合条件的数据量
+        String countHql = "SELECT count(id) FROM Student WHERE 1=1 ";
+        if(StringUtil.hasText(qo.getName())){
+            countHql = countHql + "AND name LIKE :name ";
+            params.put("name","%"+qo.getName()+"%");
+        }
+
+        // 得到符合查询条件的数据量
+        long count = dao.findOneBy(countHql,params);
+
+        if(count==0){
+            // 如果没有符合查询条件的数据，则返回安全的空Ro对象
+            return EMPTY_RO;
+        }
+
+        // 重置参数Map
+        params.clear();
+        // 用于查询符合查询条件的数据（DTO）
+        String hql = "SELECT new org.forten.si.dto.Student4List(id, name, gender, idCardNum, email, tel, address, birthday, eduBg, status, registTime) FROM Student WHERE 1=1 ";
+
+        if(StringUtil.hasText(qo.getName())){
+            hql = hql + "AND name LIKE :name ";
+            params.put("name","%"+qo.getName()+"%");
+        }
+
+        hql = hql + "ORDER BY registTime DESC";
+
+        // 通过当前页码、页容量、符合条件的数据数量计算出与分页相关的其它数据
+        // （共几页、当前页第一条数据是总数据集合中的第几条、当前页的最后一条数据是总数据集合中的第几条、当前页码、页容量、是否是第一页、是否是最后一页）
+        // 这些数据都被封装在PageInfo对象中
+        PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),count);
+
+        List<Student4List> list = dao.findBy(hql,params,(int)page.getFirstResultNum(),page.getPageSize());
+
+        return new RoWithPage<>(list,page);
+    }
 }
