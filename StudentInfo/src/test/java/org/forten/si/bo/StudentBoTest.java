@@ -1,6 +1,10 @@
 package org.forten.si.bo;
 
+import org.forten.si.dto.RoWithPage;
+import org.forten.si.dto.Student4List;
 import org.forten.si.dto.Student4Save;
+import org.forten.si.dto.StudentQo;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +34,24 @@ public class StudentBoTest {
         dto.setName("Tom");
         dto.setTel("1333333333");
 
-        bo.doSave(dto);
+//        bo.doSave(dto);
+    }
+
+    @Test
+    public void testQueryBy(){
+        RoWithPage<Student4List> ro = bo.queryBy(new StudentQo());
+        Assert.assertEquals(2,ro.getDataList().size());
+        Assert.assertEquals(3,ro.getPage().getTotalPage());
+
+        StudentQo qo = new StudentQo();
+        qo.setName("刘");
+        ro = bo.queryBy(new StudentQo());
+        Assert.assertEquals(1,ro.getDataList().size());
+        Assert.assertEquals(1,ro.getPage().getTotalPage());
+
+        qo.setName("岑");
+        ro = bo.queryBy(new StudentQo());
+        Assert.assertEquals(0,ro.getDataList().size());
+        Assert.assertEquals(0,ro.getPage().getTotalPage());
     }
 }
