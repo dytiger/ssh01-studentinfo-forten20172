@@ -22,7 +22,7 @@ public class StudentBoTest {
     @Resource
     private StudentBo bo;
 
-    @Test
+//    @Test
     public void testDoSave(){
         Student4Save dto = new Student4Save();
         dto.setAddress("address");
@@ -34,24 +34,24 @@ public class StudentBoTest {
         dto.setName("Tom");
         dto.setTel("1333333333");
 
-//        bo.doSave(dto);
+        bo.doSave(dto);
     }
 
     @Test
     public void testQueryBy(){
         RoWithPage<Student4List> ro = bo.queryBy(new StudentQo());
-        Assert.assertEquals(2,ro.getDataList().size());
+        Assert.assertEquals(2,ro.getDataListSize());
         Assert.assertEquals(3,ro.getPage().getTotalPage());
 
         StudentQo qo = new StudentQo();
         qo.setName("刘");
-        ro = bo.queryBy(new StudentQo());
-        Assert.assertEquals(1,ro.getDataList().size());
+        ro = bo.queryBy(qo);
+        Assert.assertEquals(1,ro.getDataListSize());
         Assert.assertEquals(1,ro.getPage().getTotalPage());
 
         qo.setName("岑");
-        ro = bo.queryBy(new StudentQo());
-        Assert.assertEquals(0,ro.getDataList().size());
+        ro = bo.queryBy(qo);
+        Assert.assertEquals(0,ro.getDataListSize());
         Assert.assertEquals(0,ro.getPage().getTotalPage());
     }
 }

@@ -1,5 +1,6 @@
 package org.forten.si.bo;
 
+import com.sun.rowset.internal.Row;
 import org.forten.si.dao.HibernateDao;
 import org.forten.si.dto.RoWithPage;
 import org.forten.si.dto.Student4List;
@@ -52,7 +53,7 @@ public class StudentBo {
 
         if(count==0){
             // 如果没有符合查询条件的数据，则返回安全的空Ro对象
-            return new RoWithPage<>(new ArrayList<>(), PageInfo.getInstance(1,1,0));
+            return RoWithPage.EMPTY_RO;
         }
 
         PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),count);

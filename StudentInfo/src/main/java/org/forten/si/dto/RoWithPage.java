@@ -11,6 +11,8 @@ import java.util.List;
  * Created by Administrator on 2017/7/4.
  */
 public class RoWithPage<T> {
+    public static final RoWithPage EMPTY_RO = new RoWithPage(new ArrayList(0), PageInfo.EMPTY_PAGE);
+
     private List<T> dataList;
     private PageInfo page;
 
@@ -35,8 +37,12 @@ public class RoWithPage<T> {
         this.page = page;
     }
 
-    public boolean isEmptyData(){
+    public boolean isEmptyData() {
         return CollectionUtil.isEmpty(dataList);
+    }
+
+    public int getDataListSize() {
+        return CollectionUtil.isEmpty(dataList) ? 0 : dataList.size();
     }
 
     @Override
