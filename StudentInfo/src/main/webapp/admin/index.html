@@ -19,7 +19,7 @@
         <table class='table'>
             <thead>
             <tr>
-                <th><input type='checkbox'/></th>
+                <th><input id="select-all" type='checkbox'/></th>
                 <th>姓名</th>
                 <th>性别</th>
                 <th>身份证</th>
@@ -145,6 +145,10 @@
             $('#pageNo').val(totalPage);
             list();
         });
+
+        $('#select-all').on('change',function(){
+            $('.id-check').prop('checked',$(this).prop('checked'));
+        });
     });
 
     var list = function () {
@@ -163,7 +167,7 @@
             } else {
                 $('tbody', '#data-area').empty();
                 $.each(ro.dataList, function (index, stu) {
-                    $('tbody', '#data-area').append("<tr><th><input type='checkbox' value='" + stu.id + "' /></th>" +
+                    $('tbody', '#data-area').append("<tr><th><input class='id-check' type='checkbox' value='" + stu.id + "' /></th>" +
                         "<td>" + stu.name + "</td>" +
                         "<td>" + stu.gender + "</td>" +
                         "<td>" + stu.idCardNum + "</td>" +
