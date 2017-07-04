@@ -1,6 +1,5 @@
 package org.forten.si.bo;
 
-import com.sun.rowset.internal.Row;
 import org.forten.si.dao.HibernateDao;
 import org.forten.si.dto.RoWithPage;
 import org.forten.si.dto.Student4List;
@@ -12,13 +11,13 @@ import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.swing.StringUIClientPropertyKey;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.forten.si.dto.RoWithPage.EMPTY_RO;
 
 /**
  * Created by Administrator on 2017/7/3.
@@ -53,7 +52,7 @@ public class StudentBo {
 
         if(count==0){
             // 如果没有符合查询条件的数据，则返回安全的空Ro对象
-            return RoWithPage.EMPTY_RO;
+            return EMPTY_RO;
         }
 
         PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),count);

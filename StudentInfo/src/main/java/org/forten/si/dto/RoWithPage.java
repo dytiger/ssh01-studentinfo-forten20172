@@ -7,11 +7,13 @@ import org.forten.utils.system.PageInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.forten.utils.system.PageInfo.EMPTY_PAGE;
+
 /**
  * Created by Administrator on 2017/7/4.
  */
 public class RoWithPage<T> {
-    public static final RoWithPage EMPTY_RO = new RoWithPage(new ArrayList(0), PageInfo.EMPTY_PAGE);
+    public static final RoWithPage EMPTY_RO = new RoWithPage(new ArrayList(0), EMPTY_PAGE);
 
     private List<T> dataList;
     private PageInfo page;
