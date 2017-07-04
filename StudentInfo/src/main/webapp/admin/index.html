@@ -149,7 +149,7 @@
 
     var list = function () {
         var formJson = $('#search-form').form2Json();
-        $('tbody', '#data-area').empty();
+        $('tbody', '#data-area').html('<tr><td class="text-center" colspan="11"><img src="../imgs/loading.gif" alt="Loading..." /></td></tr>');
         $.ajax({
             url: 'list.do',
             type: 'POST',
@@ -161,6 +161,7 @@
                 $('tbody', '#data-area').html('<tr><td colspan="11" class="text-center">未查询到符合条件的数据</td></tr>');
                 $('tfoot', '#data-area').hide();
             } else {
+                $('tbody', '#data-area').empty();
                 $.each(ro.dataList, function (index, stu) {
                     $('tbody', '#data-area').append("<tr><th><input type='checkbox' value='" + stu.id + "' /></th>" +
                         "<td>" + stu.name + "</td>" +
