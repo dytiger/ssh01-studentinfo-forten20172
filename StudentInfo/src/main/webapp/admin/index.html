@@ -5,6 +5,11 @@
     <title>JQuery教程_唯实讲堂_www.ForTen.org</title>
     <link rel="stylesheet" href="../css/bootstrap.css"/>
     <link rel="stylesheet" href="../css/jquery-ui.css"/>
+    <style>
+        .container>div{
+            margin: 2em 0;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -115,6 +120,28 @@
             saveDialog.dialog('open');
         });
 
+        $('tbody','#data-area').on('dblclick','[data-status]',function () {
+            var status = $(this).data('status');
+            $(this).html("<select id='status' name='status'>" +
+                "<option value='BM'>报名</option>" +
+                "<option value='SK'>上课</option>" +
+                "<option value='BY'>毕业</option>" +
+                "<option value='XX'>休学</option>" +
+                "<option value='TX'>退学</option>" +
+                "<option value='CX'>重修</option>" +
+                "</select>");
+            $('#status').val(status);
+        });
+
+        $('tbody','#data-area').on('blur','[data-status]',function () {
+            var status = $('#status').val();
+            var str = $('#status>option:selected').text();
+            $(this).html(str);
+            $(this).data('status',status);
+            var id = $(this).parent().children('th').first().children('input').first().val();
+            alert(id);
+        });
+
         $('#delete-btn').on('click',function(){
             var checkedInput = $('.id-check:checked');
             var ids = [];
@@ -205,7 +232,7 @@
                         "<td>" + stu.tel + "</td>" +
                         "<td>" + stu.address + "</td>" +
                         "<td>" + stu.eduBg + "</td>" +
-                        "<td data-status='stu.status'>" + stu.statusDes + "</td>" +
+                        "<td title='双击可编辑' data-status='"+stu.status+"'>" + stu.statusDes + "</td>" +
                         "<td>" + stu.registTimeStr + "</td></tr>");
                 });
                 $('#pageNo-span').text(ro.page.pageNo);
