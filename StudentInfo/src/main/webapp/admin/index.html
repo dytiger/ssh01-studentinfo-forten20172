@@ -50,13 +50,13 @@
                             第<span id="pageNo-span"></span>页/共<span id="totalPageNo-span"></span>页
                             第<span id="first-span"></span>条~第<span id="last-span"></span>条/共<span id="total-span"></span>条
                         </span>
-                        <span class="col-lg-8">
+                        <span class="col-lg-8 form-inline">
                             <span id="to-first-btn" class="btn">首页</span>
                             <span id="to-pre-btn" class="btn">上一页</span>
                             <span id="to-next-btn" class="btn">下一页</span>
                             <span id="to-last-btn" class="btn">未页</span>
-                            <input id="pageNo" name="pageNo" value="1" form="search-form" />
-                            <select id="pageSize" name="pageSize" form="search-form">
+                            <input id="pageNo" name="pageNo" value="1" style="width:4em;" class="form-control" form="search-form" />
+                            <select id="pageSize" name="pageSize" style="width:4em;" class="form-control" form="search-form">
                                 <option value="1">1</option>
                                 <option value="2" selected>2</option>
                                 <option value="5">5</option>
@@ -122,7 +122,7 @@
 
         $('tbody','#data-area').on('dblclick','[data-status]',function () {
             var status = $(this).data('status');
-            $(this).html("<select id='status' name='status'>" +
+            $(this).html("<select id='status'>" +
                 "<option value='BM'>报名</option>" +
                 "<option value='SK'>上课</option>" +
                 "<option value='BY'>毕业</option>" +
@@ -139,7 +139,15 @@
             $(this).html(str);
             $(this).data('status',status);
             var id = $(this).parent().children('th').first().children('input').first().val();
-            alert(id);
+
+            $.ajax({
+                url:'changeStatus.do?id='+id+"&status="+status,
+                type:'GET'
+            }).then(function(m){
+                alert(m.message);
+            },function(){
+                alert('修改学员状态的请求发送失败');
+            });
         });
 
         $('#delete-btn').on('click',function(){

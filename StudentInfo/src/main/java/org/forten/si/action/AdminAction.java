@@ -43,7 +43,11 @@ public class AdminAction {
 
     @RequestMapping("delete")
     public @ResponseBody Message delete(@RequestBody Integer... ids){
-        System.out.println(Arrays.toString(ids));
         return bo.doDelete(ids);
+    }
+
+    @RequestMapping("changeStatus")
+    public @ResponseBody Message changeStatus(int id,String status){
+        return bo.doChangeStatus(id,status);
     }
 }

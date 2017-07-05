@@ -119,4 +119,20 @@ public class StudentBo {
             return new Message("删除时出现错误");
         }
     }
+
+    @Transactional
+    public Message doChangeStatus(int id,String status){
+        String hql = "UPDATE Student SET status=:s WHERE id=:id";
+        Map<String ,Object> params = new HashMap<>(2);
+        params.put("s",status);
+        params.put("id",id);
+
+        try {
+            int n = dao.executeUpdate(hql, params);
+            return new Message("成功修改ID为["+id+"]学员的状态");
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Message("修改ID为["+id+"]的学员状态时出错");
+        }
+    }
 }
