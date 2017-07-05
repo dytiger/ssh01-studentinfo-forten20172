@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery教程_唯实讲堂_www.ForTen.org</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+</head>
+<body>
+<div class="container">
+    <div id="tabs" class="col-lg-10 col-lg-offset-1">
+        <ul>
+            <li><a href="#tabs-1">学员信息维护</a></li>
+            <li><a href="#tabs-2">修改密码</a></li>
+        </ul>
+        <div id="tabs-1">
+            <form id="update-form">
+            <table class="table table-bordered">
+                <tbody id="data-area">
+                <tr>
+                    <th>姓名</th>
+                    <td class="editable"></td>
+                    <th>性别</th>
+                    <td class="editable"></td>
+                    <th>学历</th>
+                    <td class="editable"></td>
+                </tr>
+                <tr>
+                    <th>生日</th>
+                    <td class="editable"></td>
+                    <th>身份证号</th>
+                    <td class="editable" colspan="3"></td>
+                </tr>
+                <tr>
+                    <th>电话</th>
+                    <td class="editable"></td>
+                    <th>Email</th>
+                    <td class="editable" colspan="3"></td>
+                </tr>
+                </tr>
+                <tr>
+                    <th>地址</th>
+                    <td class="editable" colspan="5"></td>
+                </tr>
+                </tr>
+                <tr>
+                    <th>状态</th>
+                    <td></td>
+                    <th>注册时间</th>
+                    <td colspan="3"></td>
+                </tr>
+                </tbody>
+            </table>
+            </form>
+            <div>
+                <button class="btn btn-success" type="button" id="mod-info-btn">修改</button>
+                <button class="btn btn-warning disabled" type="button" id="exe-mod-btn" disabled>提交</button>
+            </div>
+        </div>
+        <div id="tabs-2">
+            <form id="mod-pwd-form" class="col-lg-6 col-lg-offset-3">
+                <div class="form-group">
+                    <label>旧密码</label><input type="password" id="oldPwd" name="oldPwd" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label>新密码</label><input type="password" id="newPwd" name="newPwd" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label>确认密码</label><input type="password" id="newPwdc" name="newPwdc" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <button id="mod-pwd-btn" class="btn btn-success" type="button">确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/commons.js"></script>
+<script src="js/sha1.js"></script>
+<script>
+    $(function () {
+        $("#tabs").tabs();
+
+        show();
+
+        $("#mod-pwd-btn").on('click',function(){
+            var oP = hex_sha1($('#oldPwd').val());
+            var nP = hex_sha1($('#newPwd').val());
+
+            $.ajax({
+                url:'modifyPassword.do?oldPwd='+oP+"&newPwd="+nP,
+                type:'GET'
+            }).then(function(m){
+                alert(m.message);
+            },function(xhr){
+                alert(xhr.status);
+            });
+        });
+
+        $("#mod-info-btn").on('click',function(){
+            var editTds = $('.editable','#data-area');
+            $(editTds[0]).html("<input id='name' class='form-control' name='name' value='"+$(editTds[0]).text()+"' />");
+            $(editTds[1]).html("<select id='gender' class='form-control' name='gender'><option value='M'>男</option><option value='F'>女</option></select>");
+            $(editTds[2]).html("<input id='eduBg' class='form-control' name='eduBg' value='"+$(editTds[2]).text()+"' />");
+            $(editTds[3]).html("<input id='birthday' class='form-control' name='birthday' type='date' value='"+$(editTds[3]).text()+"' />");
+            $(editTds[4]).html("<input id='idCardNum' class='form-control' name='idCardNum' value='"+$(editTds[4]).text()+"' />");
+            $(editTds[5]).html("<input id='tel' class='form-control' name='tel' value='"+$(editTds[5]).text()+"' />");
+            $(editTds[6]).html("<input id='email' class='form-control' name='email' value='"+$(editTds[6]).text()+"' />");
+            $(editTds[7]).html("<input id='address' class='form-control' name='address' value='"+$(editTds[7]).text()+"' />");
+            $('#gender').val($(editTds[1]).data('gender'));
+
+            $('#exe-mod-btn').prop('disabled',false);
+            $('#exe-mod-btn').removeClass('disabled');
+            $(this).prop('disabled',true);
+            $(this).addClass('disabled');
+        });
+
+        $("#exe-mod-btn").on('click',function(){
+            var formJson = $('#update-form').form2Json();
+            $.ajax({
+                url:'update.do',
+                type:'POST',
+                dataType:'json',
+                contentType:'application/json',
+                data:formJson
+            }).then(function(m){
+                alert(m.message);
+                show();
+            },function(xhr){
+                alert(xhr.status);
+            });
+            $(this).prop('disabled',true);
+            $(this).addClass('disabled');
+            $('#mod-info-btn').prop('disabled',false);
+            $('#mod-info-btn').removeClass('disabled');
+        });
+    });
+
+    var show = function () {
+        $.ajax({
+            url: 'show.do',
+            type: 'GET',
+            dataType: 'json'
+        }).then(function (s) {
+            var tds = $('td','#data-area');
+            $(tds[0]).text(s.name);
+            $(tds[1]).text(s.genderDes);
+            $(tds[1]).data('gender',s.gender);
+            $(tds[2]).text(s.eduBg);
+            $(tds[3]).text(s.birthdayStr);
+            $(tds[4]).text(s.idCardNum);
+            $(tds[5]).text(s.tel);
+            $(tds[6]).text(s.email);
+            $(tds[7]).text(s.address);
+            $(tds[8]).text(s.statusDes);
+            $(tds[9]).text(s.registTimeStr);
+        }, function (xhr) {
+            alert(xhr.status+" : "+xhr.responseText);
+        });
+    }
+</script>
+</body>
+</html>

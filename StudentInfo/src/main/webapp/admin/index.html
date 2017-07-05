@@ -15,7 +15,7 @@
 <div class="container">
     <div class="row">
         <button id="open-save-btn" type="button" class="btn btn-success">添加学生信息</button>
-        <button id="delete-btn" type="button" class="btn btn-danger">删除</button>
+        <button id="delete-btn" type="button" class="btn btn-danger disabled" disabled>删除</button>
     </div>
     <div class="row">
         <form id="search-form">
@@ -212,6 +212,21 @@
 
         $('#select-all').on('change',function(){
             $('.id-check').prop('checked',$(this).prop('checked'));
+            var countChacked = $('.id-check:checked').length;
+            if(countChacked==0){
+                $('#delete-btn').addClass('disabled').prop('disabled',true);
+            }else{
+                $('#delete-btn').removeClass('disabled').prop('disabled',false);
+            }
+        });
+
+        $('tbody','#data-area').on('change','.id-check',function () {
+            var countChacked = $('.id-check:checked').length;
+            if(countChacked==0){
+                $('#delete-btn').addClass('disabled').prop('disabled',true);
+            }else{
+                $('#delete-btn').removeClass('disabled').prop('disabled',false);
+            }
         });
     });
 

@@ -1,11 +1,7 @@
 package org.forten.si.bo;
 
 import org.forten.si.dao.HibernateDao;
-import org.forten.si.dto.Message;
-import org.forten.si.dto.RoWithPage;
-import org.forten.si.dto.Student4List;
-import org.forten.si.dto.Student4Save;
-import org.forten.si.dto.StudentQo;
+import org.forten.si.dto.*;
 import org.forten.si.entity.Student;
 import org.forten.utils.common.StringUtil;
 import org.forten.utils.system.BeanPropertyUtil;
@@ -133,6 +129,53 @@ public class StudentBo {
         }catch(Exception e){
             e.printStackTrace();
             return new Message("修改ID为["+id+"]的学员状态时出错");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Student4List queryBy(int id){
+        Student s = dao.loadById(id,Student.class);
+        Student4List dto = new Student4List();
+
+        BeanPropertyUtil.copy(dto,s);
+        return dto;
+    }
+
+    @Transactional
+    public Message doModifyPassword(int id,String oldPwd,String newPwd){
+        String hql = "SELECT count(id) FROM Student WHERE id=:id AND password=:oldPwd";
+        Map<String ,Object> params = new HashMap<>(2);
+        params.put("id",id);
+        params.put("oldPwd",oldPwd);
+
+        long count = dao.findOneBy(hql,params);
+        if(count==0){
+            return new Message("你输入的旧密码错误，请重新输入。");
+        }
+
+        hql = "UPDATE Student SET password=:pwd WHERE id=:id";
+        params.clear();
+        params.put("id",id);
+        params.put("pwd",newPwd);
+
+        try{
+            dao.executeUpdate(hql,params);
+            return new Message("密码修改成功");
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Message("密码修改失败");
+        }
+    }
+
+    @Transactional
+    public Message doUpdate(int id,Student4Update dto){
+        Student s = dao.loadById(id,Student.class);
+        BeanPropertyUtil.copy(s,dto);
+        try{
+            dao.update(s);
+            return new Message("更新信息成功");
+        }catch(Exception e){
+            return new Message("更新信息失败");
         }
     }
 }
