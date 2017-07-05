@@ -9,5 +9,7 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context.xsd">
 	<mvc:annotation-driven></mvc:annotation-driven>
-	<context:component-scan base-package="org.forten"></context:component-scan>
+	<context:component-scan base-package="org.forten.si.action">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
 </beans>
