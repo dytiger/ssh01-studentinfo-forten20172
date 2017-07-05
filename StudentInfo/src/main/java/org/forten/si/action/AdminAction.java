@@ -1,7 +1,7 @@
 package org.forten.si.action;
 
 import org.forten.si.bo.StudentBo;
-import org.forten.si.dao.Message;
+import org.forten.si.dto.Message;
 import org.forten.si.dto.RoWithPage;
 import org.forten.si.dto.Student4List;
 import org.forten.si.dto.Student4Save;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 
 /**
  * Created by Administrator on 2017/7/3.
@@ -38,5 +39,11 @@ public class AdminAction {
     public @ResponseBody
     RoWithPage<Student4List> list(@RequestBody StudentQo qo) {
         return bo.queryBy(qo);
+    }
+
+    @RequestMapping("delete")
+    public @ResponseBody Message delete(@RequestBody Integer... ids){
+        System.out.println(Arrays.toString(ids));
+        return bo.doDelete(ids);
     }
 }

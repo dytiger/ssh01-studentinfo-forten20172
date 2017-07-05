@@ -1,6 +1,7 @@
 package org.forten.si.bo;
 
 import org.forten.si.dao.HibernateDao;
+import org.forten.si.dto.Message;
 import org.forten.si.dto.RoWithPage;
 import org.forten.si.dto.Student4List;
 import org.forten.si.dto.Student4Save;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,5 +103,20 @@ public class StudentBo {
         List<Student4List> list = dao.findBy(hql,params,(int)page.getFirstResultNum(),page.getPageSize());
 
         return new RoWithPage<>(list,page);
+    }
+
+    @Transactional
+    public Message doDelete(Integer... ids){
+        String hql = "DELETE FROM Student WHERE id IN (:ids)";
+        Map<String,Object> params = new HashMap<>(1);
+        // 因为HQL中的IN只能绑定Collection类型的数据，所以要把数组转换为List或Set
+        params.put("ids", Arrays.asList(ids));
+        try {
+            int n = dao.executeUpdate(hql, params);
+            return new Message("成功删除了"+n+"条数据");
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Message("删除时出现错误");
+        }
     }
 }

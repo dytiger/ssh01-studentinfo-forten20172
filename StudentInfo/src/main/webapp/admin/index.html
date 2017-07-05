@@ -7,8 +7,11 @@
     <link rel="stylesheet" href="../css/jquery-ui.css"/>
 </head>
 <body>
-<button id="open-save-btn" type="button" class="btn btn-success">添加学生信息</button>
 <div class="container">
+    <div class="row">
+        <button id="open-save-btn" type="button" class="btn btn-success">添加学生信息</button>
+        <button id="delete-btn" type="button" class="btn btn-danger">删除</button>
+    </div>
     <div class="row">
         <form id="search-form">
             <input name="name"/>
@@ -94,6 +97,10 @@
         </div>
     </form>
 </div>
+<div id="debug">
+
+
+</div>
 <script src="../js/jquery-3.2.1.js"></script>
 <script src="../js/bootstrap.js"></script>
 <script src="../js/jquery-ui.js"></script>
@@ -106,6 +113,28 @@
 
         $('#open-save-btn').on('click', function () {
             saveDialog.dialog('open');
+        });
+
+        $('#delete-btn').on('click',function(){
+            var checkedInput = $('.id-check:checked');
+            var ids = [];
+            $.each(checkedInput,function(i,e){
+                ids[i] = parseInt($(e).val());
+            });
+            var idsJson = JSON.stringify(ids);
+            $.ajax({
+                url: 'delete.do',
+                type: 'POST',
+                dataType: 'json',
+                contentType:'application/json',
+                data: idsJson
+            }).then(function(m){
+                alert(m.message);
+                list();
+            },function(xhr,status,errorMsg){
+                $('#debug').append(xhr.status).append(xhr.responseText);
+//                alert("删除请求发送错误");
+            });
         });
 
         // 为查询按钮和页码跳转按钮同时绑定单击时的list函数
@@ -169,15 +198,15 @@
                 $.each(ro.dataList, function (index, stu) {
                     $('tbody', '#data-area').append("<tr><th><input class='id-check' type='checkbox' value='" + stu.id + "' /></th>" +
                         "<td>" + stu.name + "</td>" +
-                        "<td>" + stu.gender + "</td>" +
+                        "<td>" + stu.genderDes + "</td>" +
                         "<td>" + stu.idCardNum + "</td>" +
-                        "<td>" + stu.birthday + "</td>" +
+                        "<td>" + stu.birthdayStr + "</td>" +
                         "<td>" + stu.email + "</td>" +
                         "<td>" + stu.tel + "</td>" +
                         "<td>" + stu.address + "</td>" +
                         "<td>" + stu.eduBg + "</td>" +
-                        "<td>" + stu.status + "</td>" +
-                        "<td>" + stu.registTime + "</td></tr>");
+                        "<td data-status='stu.status'>" + stu.statusDes + "</td>" +
+                        "<td>" + stu.registTimeStr + "</td></tr>");
                 });
                 $('#pageNo-span').text(ro.page.pageNo);
                 $('#totalPageNo-span').text(ro.page.totalPage);

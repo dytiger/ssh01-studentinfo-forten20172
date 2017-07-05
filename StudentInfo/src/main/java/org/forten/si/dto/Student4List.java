@@ -1,5 +1,8 @@
 package org.forten.si.dto;
 
+import org.forten.utils.common.DateUtil;
+import org.forten.utils.common.StringUtil;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -125,6 +128,50 @@ public class Student4List {
 
     public void setRegistTime(Date registTime) {
         this.registTime = registTime;
+    }
+
+    public String getBirthdayStr() {
+        return birthday == null ? "" : DateUtil.convertDateToString(birthday, "yyyy-MM-dd");
+    }
+
+    public String getRegistTimeStr() {
+        return registTime == null ? "" : DateUtil.convertDateToString(registTime, "yyyy-MM-dd HH:mm");
+    }
+
+    public String getStatusDes() {
+        if (StringUtil.hasText(status)) {
+            switch (status) {
+                case "BM":
+                    return "报名";
+                case "SK":
+                    return "上课";
+                case "BY":
+                    return "毕业";
+                case "XX":
+                    return "休学";
+                case "TX":
+                    return "退学";
+                case "CX":
+                    return "重修";
+                default:
+                    return "未知";
+
+            }
+        } else {
+            return "未知";
+        }
+    }
+
+    public String getGenderDes(){
+        if(!StringUtil.hasText(gender)){
+            return "未知";
+        }else{
+            if(gender.equals("M")){
+                return "男";
+            }else{
+                return "女";
+            }
+        }
     }
 
     @Override

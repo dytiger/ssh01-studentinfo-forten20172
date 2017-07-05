@@ -1,4 +1,4 @@
-package org.forten.si.dao;
+package org.forten.si.dto;
 
 /**
  * Created by Administrator on 2017/7/3.
