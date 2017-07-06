@@ -1,10 +1,7 @@
 package org.forten.si.action;
 
 import org.forten.si.bo.StudentBo;
-import org.forten.si.dto.LoginedUser;
-import org.forten.si.dto.Message;
-import org.forten.si.dto.Student4List;
-import org.forten.si.dto.Student4Update;
+import org.forten.si.dto.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -63,5 +60,17 @@ public class StudentAction {
     @RequestMapping("forgetPwd")
     public @ResponseBody Message forgetPwd(String name){
         return bo.forgetPwd(name);
+    }
+
+    @RequestMapping("regist")
+    public @ResponseBody
+    Message save(@RequestBody Student4Save4User dto){
+        try{
+            bo.doRegist(dto);
+            return new Message("注册成功");
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Message("注册失败");
+        }
     }
 }

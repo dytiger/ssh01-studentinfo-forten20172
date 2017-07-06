@@ -37,6 +37,13 @@ public class StudentBo {
         dao.save(stu);
     }
 
+    @Transactional
+    public void doRegist(Student4Save4User dto){
+        Student stu = new Student();
+        BeanPropertyUtil.copy(stu,dto);
+        dao.save(stu);
+    }
+
     @Transactional(readOnly = true)
     public RoWithPage<Student4List> queryBy(StudentQo qo){
         String countHql = "SELECT count(id) FROM Student WHERE 1=1 ";
