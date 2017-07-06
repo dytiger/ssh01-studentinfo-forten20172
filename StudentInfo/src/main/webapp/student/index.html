@@ -91,8 +91,9 @@
             var nP = hex_sha1($('#newPwd').val());
 
             $.ajax({
-                url:'modifyPassword.do?oldPwd='+oP+"&newPwd="+nP,
-                type:'GET'
+                url:'modifyPassword.do',
+                type:'POST',
+                data:'oldPwd='+oP+"&newPwd="+nP
             }).then(function(m){
                 alert(m.message);
             },function(xhr){
