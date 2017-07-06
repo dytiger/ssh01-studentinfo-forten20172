@@ -1,15 +1,20 @@
 package org.forten.si.bo;
 
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.HtmlEmail;
 import org.forten.si.dao.HibernateDao;
 import org.forten.si.dto.*;
 import org.forten.si.entity.Student;
+import org.forten.utils.common.NumberUtil;
 import org.forten.utils.common.StringUtil;
+import org.forten.utils.security.SHA1Util;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -177,5 +182,63 @@ public class StudentBo {
         }catch(Exception e){
             return new Message("更新信息失败");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public LoginedUser login(String name,String password){
+        String hql = "SELECT new org.forten.si.dto.LoginedUser(id,name,email) FROM Student WHERE name=:n AND password=:p";
+        Map<String ,Object> params = new HashMap<>(2);
+        params.put("n",name);
+        params.put("p",password);
+
+        return dao.findOneBy(hql,params);
+    }
+
+    @Transactional
+    public Message forgetPwd(String name){
+        String hql = "SELECT new org.forten.si.dto.Student4List(id, name, gender, idCardNum, email, tel, address, birthday, eduBg, status, registTime) FROM Student WHERE name=:n";
+        Map<String ,Object> params = new HashMap<>(1);
+        params.put("n",name);
+
+        Student4List dto = dao.findOneBy(hql,params);
+        if(dto==null){
+            return new Message("用户名不存在");
+        }
+
+        String pwdCode = getRandomStr();
+        String shaPwdCode = SHA1Util.encryptSHA(pwdCode);
+        hql = "UPDATE Student SET password=:fp WHERE id=:id";
+        params.clear();
+        params.put("id",dto.getId());
+        params.put("fp",shaPwdCode);
+        dao.executeUpdate(hql,params);
+
+        new Thread(()->{
+            try {
+                HtmlEmail email = new HtmlEmail();
+                email.setHostName("smtp.126.com");
+                email.setCharset("UTF-8");
+                email.setSmtpPort(465);
+                email.setAuthenticator(new DefaultAuthenticator("thcic_test", "a123456"));
+                email.setSSLOnConnect(true);
+                email.addTo(dto.getEmail(),dto.getName());
+                email.setFrom("thcic_test@126.com", "System");
+                email.setSubject("重置密码");
+                email.setHtmlMsg("<p>系统已经为你重置密码，新密码为：<strong>"+pwdCode+"</strong></p><p>请尽快<a href='http://localhost:8081/login.html'>登录</a>系统修改密码！</p>");
+                email.send();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }).run();
+
+        return new Message("已经向<strong>"+dto.getEmail()+"</strong>发送了密码重置邮件，请查收");
+    }
+
+    private String getRandomStr(){
+        String s = "";
+        for(int i = 0;i<6;i++){
+            s = s+ (char)NumberUtil.getRandomInteger(97,(97+25));
+        }
+        return s;
     }
 }

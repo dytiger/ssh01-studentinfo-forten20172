@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery教程_唯实讲堂_www.ForTen.org</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="col-lg-6 col-lg-offset-3">
+        <form id="login-form" action="login.do" method="post">
+            <div class="form-group">
+                <label>用户名</label>
+                <input class="form-control" name="name" id="name" />
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input class="form-control" id="password" name="password" type="password" />
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6">
+                <button class="btn btn-success" type="submit">提交</button>
+                <button class="btn btn-warning" type="reset">重置</button>
+                </div>
+                <div class="col-lg-6 text-right">
+                    <a href="forgetpwd.html">忘记密码</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/sha1.js"></script>
+<script>
+    $(function () {
+        $("#login-form").on('submit',function(){
+            var pwdInput = $('#password');
+            var pwd = hex_sha1(pwdInput.val());
+            pwdInput.val(pwd);
+        });
+    });
+</script>
+</body>
+</html>

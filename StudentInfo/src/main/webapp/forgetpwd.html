@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery教程_唯实讲堂_www.ForTen.org</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+</head>
+<body>
+<div class="container">
+    <form id="myform" class="form-horizontal">
+        <label>输入用户名</label>
+        <input id="name" name="name" />
+        <button id="btn" type="button">确定</button>
+    </form>
+    <div id="msg">
+
+    </div>
+</div>
+
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script>
+    $(function () {
+        $('#btn').on('click',forget);
+    });
+
+    var forget = function(){
+        $.ajax({
+            url:'forgetPwd.do?name='+$('#name').val(),
+            dataType: 'json'
+        }).then(function(m){
+            $('#msg').html(m.message);
+        },function(){
+            $('#msg').html("请求发送失败");
+        });
+    }
+</script>
+</body>
+</html>
