@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by Administrator on 2017/7/6.
  */
-//@WebFilter(urlPatterns = {"/student/*"})
+@WebFilter(urlPatterns = {"/student/*"})
 public class AuthLoginedFilter4Student implements Filter {
 
     @Override

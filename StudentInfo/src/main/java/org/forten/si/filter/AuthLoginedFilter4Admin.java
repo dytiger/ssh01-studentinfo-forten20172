@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * Created by Administrator on 2017/7/6.
  */
-//@WebFilter(urlPatterns = {"/admin/*"})
+@WebFilter(urlPatterns = {"/admin/*"})
 public class AuthLoginedFilter4Admin implements Filter {
 
     @Override
