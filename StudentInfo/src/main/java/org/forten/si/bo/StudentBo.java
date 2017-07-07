@@ -31,62 +31,62 @@ public class StudentBo {
     private HibernateDao dao;
 
     @Transactional
-    public void doSave(Student4Save dto){
+    public void doSave(Student4Save dto) {
         Student stu = new Student();
-        BeanPropertyUtil.copy(stu,dto);
+        BeanPropertyUtil.copy(stu, dto);
         dao.save(stu);
     }
 
     @Transactional
-    public void doRegist(Student4Save4User dto){
+    public void doRegist(Student4Save4User dto) {
         Student stu = new Student();
-        BeanPropertyUtil.copy(stu,dto);
+        BeanPropertyUtil.copy(stu, dto);
         dao.save(stu);
     }
 
     @Transactional(readOnly = true)
-    public RoWithPage<Student4List> queryBy(StudentQo qo){
+    public RoWithPage<Student4List> queryBy(StudentQo qo) {
         String countHql = "SELECT count(id) FROM Student WHERE 1=1 ";
         String hql = "SELECT new org.forten.si.dto.Student4List(id, name, gender, idCardNum, email, tel, address, birthday, eduBg, status, registTime) FROM Student WHERE 1=1 ";
-        Map<String,Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
 
-        if(StringUtil.hasText(qo.getName())){
+        if (StringUtil.hasText(qo.getName())) {
             countHql = countHql + "AND name LIKE :name ";
             hql = hql + "AND name LIKE :name ";
-            params.put("name","%"+qo.getName()+"%");
+            params.put("name", "%" + qo.getName() + "%");
         }
 
         hql = hql + "ORDER BY registTime DESC";
 
-        long count = dao.findOneBy(countHql,params);
+        long count = dao.findOneBy(countHql, params);
 
-        if(count==0){
+        if (count == 0) {
             // 如果没有符合查询条件的数据，则返回安全的空Ro对象
             return EMPTY_RO;
         }
 
-        PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),count);
+        PageInfo page = PageInfo.getInstance(qo.getPageNo(), qo.getPageSize(), count);
 
-        List<Student4List> list = dao.findBy(hql,params,(int)page.getFirstResultNum(),page.getPageSize());
+        List<Student4List> list = dao.findBy(hql, params, (int) page.getFirstResultNum(), page.getPageSize());
 
-        return new RoWithPage<>(list,page);
+        return new RoWithPage<>(list, page);
     }
 
     @Transactional(readOnly = true)
-    public RoWithPage<Student4List> queryBy2(StudentQo qo){
+    public RoWithPage<Student4List> queryBy2(StudentQo qo) {
         // 参数Map
-        Map<String,Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         // 用于统计符合条件的数据量
         String countHql = "SELECT count(id) FROM Student WHERE 1=1 ";
-        if(StringUtil.hasText(qo.getName())){
+        if (StringUtil.hasText(qo.getName())) {
             countHql = countHql + "AND name LIKE :name ";
-            params.put("name","%"+qo.getName()+"%");
+            params.put("name", "%" + qo.getName() + "%");
         }
 
         // 得到符合查询条件的数据量
-        long count = dao.findOneBy(countHql,params);
+        long count = dao.findOneBy(countHql, params);
 
-        if(count==0){
+        if (count == 0) {
             // 如果没有符合查询条件的数据，则返回安全的空Ro对象
             return EMPTY_RO;
         }
@@ -96,9 +96,9 @@ public class StudentBo {
         // 用于查询符合查询条件的数据（DTO）
         String hql = "SELECT new org.forten.si.dto.Student4List(id, name, gender, idCardNum, email, tel, address, birthday, eduBg, status, registTime) FROM Student WHERE 1=1 ";
 
-        if(StringUtil.hasText(qo.getName())){
+        if (StringUtil.hasText(qo.getName())) {
             hql = hql + "AND name LIKE :name ";
-            params.put("name","%"+qo.getName()+"%");
+            params.put("name", "%" + qo.getName() + "%");
         }
 
         hql = hql + "ORDER BY registTime DESC";
@@ -106,109 +106,109 @@ public class StudentBo {
         // 通过当前页码、页容量、符合条件的数据数量计算出与分页相关的其它数据
         // （共几页、当前页第一条数据是总数据集合中的第几条、当前页的最后一条数据是总数据集合中的第几条、当前页码、页容量、是否是第一页、是否是最后一页）
         // 这些数据都被封装在PageInfo对象中
-        PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),count);
+        PageInfo page = PageInfo.getInstance(qo.getPageNo(), qo.getPageSize(), count);
 
-        List<Student4List> list = dao.findBy(hql,params,(int)page.getFirstResultNum(),page.getPageSize());
+        List<Student4List> list = dao.findBy(hql, params, (int) page.getFirstResultNum(), page.getPageSize());
 
-        return new RoWithPage<>(list,page);
+        return new RoWithPage<>(list, page);
     }
 
     @Transactional
-    public Message doDelete(Integer... ids){
+    public Message doDelete(Integer... ids) {
         String hql = "DELETE FROM Student WHERE id IN (:ids)";
-        Map<String,Object> params = new HashMap<>(1);
+        Map<String, Object> params = new HashMap<>(1);
         // 因为HQL中的IN只能绑定Collection类型的数据，所以要把数组转换为List或Set
         params.put("ids", Arrays.asList(ids));
         try {
             int n = dao.executeUpdate(hql, params);
-            return new Message("成功删除了"+n+"条数据");
-        }catch(Exception e){
+            return new Message("成功删除了" + n + "条数据");
+        } catch (Exception e) {
             e.printStackTrace();
             return new Message("删除时出现错误");
         }
     }
 
     @Transactional
-    public Message doChangeStatus(int id,String status){
+    public Message doChangeStatus(int id, String status) {
         String hql = "UPDATE Student SET status=:s WHERE id=:id";
-        Map<String ,Object> params = new HashMap<>(2);
-        params.put("s",status);
-        params.put("id",id);
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("s", status);
+        params.put("id", id);
 
         try {
             int n = dao.executeUpdate(hql, params);
-            return new Message("成功修改ID为["+id+"]学员的状态");
-        }catch(Exception e){
+            return new Message("成功修改ID为[" + id + "]学员的状态");
+        } catch (Exception e) {
             e.printStackTrace();
-            return new Message("修改ID为["+id+"]的学员状态时出错");
+            return new Message("修改ID为[" + id + "]的学员状态时出错");
         }
     }
 
     @Transactional(readOnly = true)
-    public Student4List queryBy(int id){
-        Student s = dao.loadById(id,Student.class);
+    public Student4List queryBy(int id) {
+        Student s = dao.loadById(id, Student.class);
         Student4List dto = new Student4List();
 
-        BeanPropertyUtil.copy(dto,s);
+        BeanPropertyUtil.copy(dto, s);
         return dto;
     }
 
     @Transactional
-    public Message doModifyPassword(int id,String oldPwd,String newPwd){
+    public Message doModifyPassword(int id, String oldPwd, String newPwd) {
         String hql = "SELECT count(id) FROM Student WHERE id=:id AND password=:oldPwd";
-        Map<String ,Object> params = new HashMap<>(2);
-        params.put("id",id);
-        params.put("oldPwd",oldPwd);
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("id", id);
+        params.put("oldPwd", oldPwd);
 
-        long count = dao.findOneBy(hql,params);
-        if(count==0){
+        long count = dao.findOneBy(hql, params);
+        if (count == 0) {
             return new Message("你输入的旧密码错误，请重新输入。");
         }
 
         hql = "UPDATE Student SET password=:pwd WHERE id=:id";
         params.clear();
-        params.put("id",id);
-        params.put("pwd",newPwd);
+        params.put("id", id);
+        params.put("pwd", newPwd);
 
-        try{
-            dao.executeUpdate(hql,params);
+        try {
+            dao.executeUpdate(hql, params);
             return new Message("密码修改成功");
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new Message("密码修改失败");
         }
     }
 
     @Transactional
-    public Message doUpdate(int id,Student4Update dto){
-        Student s = dao.loadById(id,Student.class);
-        BeanPropertyUtil.copy(s,dto);
-        try{
+    public Message doUpdate(int id, Student4Update dto) {
+        Student s = dao.loadById(id, Student.class);
+        BeanPropertyUtil.copy(s, dto);
+        try {
             dao.update(s);
             return new Message("更新信息成功");
-        }catch(Exception e){
+        } catch (Exception e) {
             return new Message("更新信息失败");
         }
     }
 
     @Transactional(readOnly = true)
-    public LoginedUser login(String name,String password){
+    public LoginedUser login(String name, String password) {
         String hql = "SELECT new org.forten.si.dto.LoginedUser(id,name,email) FROM Student WHERE name=:n AND password=:p";
-        Map<String ,Object> params = new HashMap<>(2);
-        params.put("n",name);
-        params.put("p",password);
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("n", name);
+        params.put("p", password);
 
-        return dao.findOneBy(hql,params);
+        return dao.findOneBy(hql, params);
     }
 
     @Transactional
-    public Message forgetPwd(String name){
+    public Message forgetPwd(String name) {
         String hql = "SELECT new org.forten.si.dto.Student4List(id, name, gender, idCardNum, email, tel, address, birthday, eduBg, status, registTime) FROM Student WHERE name=:n";
-        Map<String ,Object> params = new HashMap<>(1);
-        params.put("n",name);
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("n", name);
 
-        Student4List dto = dao.findOneBy(hql,params);
-        if(dto==null){
+        Student4List dto = dao.findOneBy(hql, params);
+        if (dto == null) {
             return new Message("用户名不存在");
         }
 
@@ -216,11 +216,11 @@ public class StudentBo {
         String shaPwdCode = SHA1Util.encryptSHA(pwdCode);
         hql = "UPDATE Student SET password=:fp WHERE id=:id";
         params.clear();
-        params.put("id",dto.getId());
-        params.put("fp",shaPwdCode);
-        dao.executeUpdate(hql,params);
+        params.put("id", dto.getId());
+        params.put("fp", shaPwdCode);
+        dao.executeUpdate(hql, params);
 
-        new Thread(()->{
+        new Thread(() -> {
             try {
                 HtmlEmail email = new HtmlEmail();
                 email.setHostName("smtp.126.com");
@@ -228,23 +228,33 @@ public class StudentBo {
                 email.setSmtpPort(465);
                 email.setAuthenticator(new DefaultAuthenticator("thcic_test", "a123456"));
                 email.setSSLOnConnect(true);
-                email.addTo(dto.getEmail(),dto.getName());
+                email.addTo(dto.getEmail(), dto.getName());
                 email.setFrom("thcic_test@126.com", "System");
                 email.setSubject("重置密码");
-                email.setHtmlMsg("<p>系统已经为你重置密码，新密码为：<strong>"+pwdCode+"</strong></p><p>请尽快<a href='http://localhost:8081/login.html'>登录</a>系统修改密码！</p>");
+                email.setHtmlMsg("<p>系统已经为你重置密码，新密码为：<strong>" + pwdCode + "</strong></p><p>请尽快<a href='http://localhost:8081/login.html'>登录</a>系统修改密码！</p>");
                 email.send();
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }).run();
 
-        return new Message("已经向<strong>"+dto.getEmail()+"</strong>发送了密码重置邮件，请查收");
+        return new Message("已经向<strong>" + dto.getEmail() + "</strong>发送了密码重置邮件，请查收");
     }
 
-    private String getRandomStr(){
+    @Transactional(readOnly = true)
+    public boolean existsEmail(String email) {
+        String hql = "SELECT count(id) FROM Student WHERE email=:email";
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("email",email);
+
+        long count = dao.findOneBy(hql, params);
+        return count == 1L;
+    }
+
+    private String getRandomStr() {
         String s = "";
-        for(int i = 0;i<6;i++){
-            s = s+ (char)NumberUtil.getRandomInteger(97,(97+25));
+        for (int i = 0; i < 6; i++) {
+            s = s + (char) NumberUtil.getRandomInteger(97, (97 + 25));
         }
         return s;
     }

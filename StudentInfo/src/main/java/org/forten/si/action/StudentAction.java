@@ -73,4 +73,9 @@ public class StudentAction {
             return new Message("注册失败");
         }
     }
+
+    @RequestMapping("existsEmail")
+    public @ResponseBody Boolean existsEmail(String email){
+        return !bo.existsEmail(email);
+    }
 }
