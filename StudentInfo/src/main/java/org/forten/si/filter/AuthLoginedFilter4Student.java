@@ -1,7 +1,5 @@
 package org.forten.si.filter;
 
-import org.forten.si.dto.LoginedUser;
-
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +10,8 @@ import java.io.IOException;
 /**
  * Created by Administrator on 2017/7/6.
  */
-//@WebFilter(urlPatterns = {"/admin/*","/student/*"})
-public class AuthLoginedFilter implements Filter {
+//@WebFilter(urlPatterns = {"/student/*"})
+public class AuthLoginedFilter4Student implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -25,9 +23,9 @@ public class AuthLoginedFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession();
-        LoginedUser dto = (LoginedUser)session.getAttribute("logined");
-        if(dto==null){
-            res.sendRedirect("/login.html");
+        boolean isAdmin = (Boolean)session.getAttribute("isAdmin");
+        if(isAdmin){
+            res.sendRedirect("/admin/index.html");
         }else{
             chain.doFilter(req,res);
         }

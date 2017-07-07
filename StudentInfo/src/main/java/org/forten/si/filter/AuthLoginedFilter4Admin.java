@@ -12,8 +12,8 @@ import java.io.IOException;
 /**
  * Created by Administrator on 2017/7/6.
  */
-//@WebFilter(urlPatterns = {"/admin/*","/student/*"})
-public class AuthLoginedFilter implements Filter {
+//@WebFilter(urlPatterns = {"/admin/*"})
+public class AuthLoginedFilter4Admin implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -25,9 +25,9 @@ public class AuthLoginedFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession();
-        LoginedUser dto = (LoginedUser)session.getAttribute("logined");
-        if(dto==null){
-            res.sendRedirect("/login.html");
+        boolean isAdmin = (Boolean)session.getAttribute("isAdmin");
+        if(!isAdmin){
+            res.sendRedirect("/student/index.html");
         }else{
             chain.doFilter(req,res);
         }

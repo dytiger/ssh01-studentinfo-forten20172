@@ -10,6 +10,8 @@ import org.forten.utils.common.StringUtil;
 import org.forten.utils.security.SHA1Util;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
+import org.forten.utils.system.ValidateException;
+import org.forten.utils.system.ValidateUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,8 @@ public class StudentBo {
 
     @Transactional
     public void doRegist(Student4Save4User dto) {
+        ValidateUtil.validateThrow(dto);
+
         Student stu = new Student();
         BeanPropertyUtil.copy(stu, dto);
         dao.save(stu);
@@ -245,7 +249,7 @@ public class StudentBo {
     public boolean existsEmail(String email) {
         String hql = "SELECT count(id) FROM Student WHERE email=:email";
         Map<String, Object> params = new HashMap<>(1);
-        params.put("email",email);
+        params.put("email", email);
 
         long count = dao.findOneBy(hql, params);
         return count == 1L;

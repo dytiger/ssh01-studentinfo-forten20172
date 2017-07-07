@@ -39,6 +39,9 @@
                 </form>
             </div>
             <div id="tab-2">
+                <div id="msg-div">
+
+                </div>
                 <form id="regist-form" method="post" action="regist.do">
                     <div class="form-group">
                         <label>姓名</label>
@@ -227,7 +230,7 @@
                 dataType: 'json',// 从服务器响应的报文内容格式
                 data: dataJson// 向服务器提交的请求
             }).then(function (msgDto) {
-                alert(msgDto.message);
+                $('#msg-div').html(msgDto.message);
                 $('#regist-form').get(0).reset();
             }, function (jqXhr, status, errorMsg) {
                 alert(msgDto.message);
