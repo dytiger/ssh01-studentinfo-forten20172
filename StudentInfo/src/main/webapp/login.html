@@ -119,8 +119,14 @@
 <script src="js/jquery.validate.js"></script>
 <script>
     $(function () {
+        // 自定义身份证号
         $.validator.methods.chineseIdCard = function (value, element) {
             return /^[1-9]\d{5}[1-2]\d{3}((0[1-9])|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X|x)$/.test(value);
+        };
+        // 自定义密码
+        // 8到12个字符，必须包含大小写英文字母和数字
+        $.validator.methods.password = function (value, element) {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,12}$/.test(value);
         };
         $('#regist-form').validate({
             rules: {
