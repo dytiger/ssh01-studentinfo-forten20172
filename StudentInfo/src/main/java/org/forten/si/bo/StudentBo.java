@@ -2,6 +2,12 @@ package org.forten.si.bo;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.HtmlEmail;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.forten.si.dao.HibernateDao;
 import org.forten.si.dto.*;
 import org.forten.si.entity.Student;
@@ -253,6 +259,50 @@ public class StudentBo {
 
         long count = dao.findOneBy(hql, params);
         return count == 1L;
+    }
+
+    @Transactional(readOnly = true)
+    public Workbook exportData() {
+        String hql = "SELECT new org.forten.si.dto.Student4Export(name,tel,email,address,idCardNum,birthday) " +
+                "FROM Student ORDER BY registTime";
+
+        List<Student4Export> dtoList = dao.findBy(hql);
+
+        // 2003格式的Excel工作簿模型
+        Workbook wb = new HSSFWorkbook();
+        // 2007格式的Excel工作簿模型
+        // Workbook wb = new XSSFWorkbook();
+
+        // 在Workbook中创建一个sheet
+        Sheet sheet = wb.createSheet("学员联系信息");
+
+        // 在sheet中创建表头行
+        Row header = sheet.createRow(0);
+
+        // 创建表头行中的单元格及表头标题
+        Cell c1 = header.createCell(0);
+        c1.setCellValue("序号");
+        header.createCell(1).setCellValue("姓名");
+        header.createCell(2).setCellValue("电话");
+        header.createCell(3).setCellValue("Email");
+        header.createCell(4).setCellValue("地址");
+        header.createCell(5).setCellValue("身份证号");
+        header.createCell(6).setCellValue("生日");
+
+        // 生成数据行
+        for (Student4Export dto : dtoList) {
+            Row row = sheet.createRow(sheet.getLastRowNum()+1);
+            row.createCell(0).setCellValue(sheet.getLastRowNum());
+            row.createCell(1).setCellValue(dto.getName());
+            row.createCell(2).setCellValue(dto.getTel());
+            row.createCell(3).setCellValue(dto.getEmail());
+            row.createCell(4).setCellValue(dto.getAddress());
+            row.createCell(5).setCellValue(dto.getIdCardNum());
+            row.createCell(6).setCellValue(dto.getBirthdayStr());
+        }
+
+
+        return wb;
     }
 
     private String getRandomStr() {

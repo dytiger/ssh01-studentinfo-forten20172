@@ -1,6 +1,7 @@
 package org.forten.si.dao;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -126,6 +127,11 @@ public class HibernateDao {
 			query.setParameter(kv.getKey(), kv.getValue());
 		}
 		return query.getResultList();
+	}
+
+
+	public <T> List<T> findBy(String hql) {
+		return findBy(hql,new HashMap<>(0));
 	}
 
 	/**

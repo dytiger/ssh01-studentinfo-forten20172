@@ -1,5 +1,6 @@
 package org.forten.si.action;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.forten.si.bo.StudentBo;
 import org.forten.si.dto.Message;
 import org.forten.si.dto.RoWithPage;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
@@ -49,5 +53,16 @@ public class AdminAction {
     @RequestMapping("changeStatus")
     public @ResponseBody Message changeStatus(int id,String status){
         return bo.doChangeStatus(id,status);
+    }
+
+    @RequestMapping("export")
+    public void export(HttpServletResponse response){
+        try(OutputStream out = response.getOutputStream(); Workbook wb = bo.exportData()){
+            response.setContentType("application/x-msexcel");
+            response.setHeader("Content-Disposition","attachment;filename=students.xls");
+            wb.write(out);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }

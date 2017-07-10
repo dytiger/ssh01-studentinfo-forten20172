@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery教程_唯实讲堂_www.ForTen.org</title>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <!--<link rel="stylesheet" href="css/screen.css"/>-->
+</head>
+<body>
+<div class="container">
+    <div class="col-lg-8 col-lg-offset-2">
+        <div id="tabs">
+            <div>
+                <ul>
+                    <li><a href="#tab-1">登录</a></li>
+                    <li><a href="#tab-2">注册</a></li>
+                </ul>
+            </div>
+            <div id="tab-1">
+                <form id="login-form" action="login.do" method="post">
+                    <div class="form-group">
+                        <label>用户名</label>
+                        <input class="form-control" name="name" id="name"/>
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input class="form-control" id="password" name="password" type="password"/>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-lg-6">
+                            <button class="btn btn-success" type="submit">提交</button>
+                            <button class="btn btn-warning" type="reset">重置</button>
+                        </div>
+                        <div class="col-lg-6 text-right">
+                            <a href="forgetpwd.html">忘记密码</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="tab-2">
+                <div id="msg-div">
+
+                </div>
+                <form id="regist-form" method="post" action="regist.do" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">姓名</label>
+                        <div class="col-sm-5"><input id="rname" class="form-control" name="name"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">密码</label>
+                        <div class="col-sm-5"><input id="pwd" class="form-control" type="password" name="password"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">确认密码</label>
+                        <div class="col-sm-5"><input id="pwd2" class="form-control" type="password" name="password2"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">性别</label>
+                        <div class="col-sm-5"><label class="radio-inline">
+                            <input id="genderm" class="radio" type="radio" name="gender" value="M" checked/>男
+                        </label>
+                            <label class="radio-inline">
+                                <input id="genderf" class="radio" type="radio" name="gender" value="F"/>女
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">生日</label>
+                        <div class="col-sm-5"><input id="birthday" class="form-control" type="date" name="birthday"
+                                                     value="1990-01-01"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">身份证号</label>
+                        <div class="col-sm-5"><input id="idCardNum" class="form-control" name="idCardNum"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">学历或学位</label>
+                        <div class="col-sm-5"><input id="eduBg" class="form-control" name="eduBg" list="eduBgList"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">电话</label>
+                        <div class="col-sm-5"><input id="tel" class="form-control" name="tel"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">Email</label>
+                        <div class="col-sm-5"><input id="email" class="form-control" name="email"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">地址</label>
+                        <div class="col-sm-5"><input id="address" class="form-control" name="address"/></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-9 col-sm-offset-4">
+                            <button id="regist-btn" class="btn btn-primary" type="button">注册</button>
+                            <button class="btn btn-warning" type="reset">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<datalist id="eduBgList">
+    <option value="大本"/>
+    <option value="大专"/>
+    <option value="高中"/>
+    <option value="硕士"/>
+    <option value="博士"/>
+</datalist>
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/sha1.js"></script>
+<script src="js/commons.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script>
+    $(function () {
+        $.validator.methods.chineseIdCard = function (value, element) {
+            return /^[1-9]\d{5}[1-2]\d{3}((0[1-9])|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X|x)$/.test(value);
+        };
+        $('#regist-form').validate({
+            rules: {
+                name: {
+                    required: true,
+                    rangelength: [2, 10]
+                },
+                password: {
+                    required: true,
+                    rangelength: [6, 30]
+                },
+                password2: {
+                    equalTo: "#pwd"
+                },
+                birthday: {
+                    required: true,
+                    date: true
+                },
+                idCardNum: {
+                    chineseIdCard: true
+                },
+                email: {
+                    required: true,
+                    email: true,
+                    remote: {
+                        url: 'existsEmail.do',
+                        type: 'post',
+                        data: {
+                            email: function () {
+                                return $('#email').val();
+                            }
+                        }
+                    }
+                },
+                tel: {
+                    required: true,
+                    rangelength: [6, 15]
+                },
+                eduBg: {
+                    required: true
+                },
+                address: {
+                    required: true,
+                    rangelength: [10, 50]
+                }
+            },
+            messages: {
+                name: {
+                    required: '请输入姓名',
+                    rangelength: '姓名长度非法，请输入{0}到{1}之间个字符'
+                },
+                password: {
+                    required: '请输入密码',
+                    rangelength: '密码长度非法，请输入{0}到{1}之间个字符'
+                },
+                password2: {
+                    equalTo: '密码与确认密码的输入不同'
+                },
+                birthday: {
+                    required: '请输入生日',
+                    date: '请输入正确的日期格式'
+                },
+                idCardNum: {
+                    chineseIdCard: '输入18位身份证号的正确格式'
+                },
+                email: {
+                    required: '请输入Email',
+                    email: '请输入正确的Email格式',
+                    remote: '此Email已经存在'
+                },
+                tel: {
+                    required: '请输入电话号码',
+                    rangelength: '电话号码长度非法，请输入{0}到{1}之间个字符'
+                },
+                eduBg: {
+                    required: '请输入学历'
+                },
+                address: {
+                    required: '请输入地址',
+                    rangelength: '地址长度非法，请输入{0}到{1}之间个字符'
+                }
+            },
+            errorElement: "em",
+            errorPlacement: function ( error, element ) {
+                // Add the `help-block` class to the error element
+                error.addClass( "help-block" );
+
+                // Add `has-feedback` class to the parent div.form-group
+                // in order to add icons to inputs
+                element.parents( ".col-sm-5" ).addClass( "has-feedback" );
+
+                if ( element.prop( "type" ) === "checkbox" ) {
+                    error.insertAfter( element.parent( "label" ) );
+                } else {
+                    error.insertAfter( element );
+                }
+
+                // Add the span element, if doesn't exists, and apply the icon classes to it.
+                if ( !element.next( "span" )[ 0 ] ) {
+                    $( "<span class='glyphicon glyphicon-remove form-control-feedback'></span>" ).insertAfter( element );
+                }
+            },
+            success: function ( label, element ) {
+                // Add the span element, if doesn't exists, and apply the icon classes to it.
+                if ( !$( element ).next( "span" )[ 0 ] ) {
+                    $( "<span class='glyphicon glyphicon-ok form-control-feedback'></span>" ).insertAfter( $( element ) );
+                }
+            },
+            highlight: function ( element, errorClass, validClass ) {
+                $( element ).parents( ".col-sm-5" ).addClass( "has-error" ).removeClass( "has-success" );
+                $( element ).next( "span" ).addClass( "glyphicon-remove" ).removeClass( "glyphicon-ok" );
+            },
+            unhighlight: function ( element, errorClass, validClass ) {
+                $( element ).parents( ".col-sm-5" ).addClass( "has-success" ).removeClass( "has-error" );
+                $( element ).next( "span" ).addClass( "glyphicon-ok" ).removeClass( "glyphicon-remove" );
+            }
+        });
+        $('#tabs').tabs();
+        $("#login-form").on('submit', function () {
+            var pwdInput = $('#password');
+            var pwd = hex_sha1(pwdInput.val());
+            pwdInput.val(pwd);
+        });
+        $('#regist-btn').on('click', regist);
+    });
+
+    var regist = function () {
+        if ($('#regist-form').valid()) {
+            var pwdInput = $('#pwd');
+            var pwd = hex_sha1(pwdInput.val());
+            pwdInput.val(pwd);
+            $('#pwd2').val(pwd);
+            var dataJson = $('#regist-form').form2Json();
+            $.ajax({
+                url: 'regist.do',// 请求的URL
+                type: 'POST',// 请求提交的方式（默认为GET）
+                contentType: 'application/json',// 向服务器请求的报文内容格式
+                dataType: 'json',// 从服务器响应的报文内容格式
+                data: dataJson// 向服务器提交的请求
+            }).then(function (msgDto) {
+                $('#msg-div').html(msgDto.message);
+                $('#regist-form').get(0).reset();
+            }, function (jqXhr, status, errorMsg) {
+                alert(msgDto.message);
+            });
+        }
+    };
+</script>
+</body>
+</html>
