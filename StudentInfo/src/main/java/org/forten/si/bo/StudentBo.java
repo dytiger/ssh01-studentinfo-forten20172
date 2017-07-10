@@ -3,10 +3,7 @@ package org.forten.si.bo;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.forten.si.dao.HibernateDao;
 import org.forten.si.dto.*;
@@ -300,7 +297,6 @@ public class StudentBo {
             row.createCell(5).setCellValue(dto.getIdCardNum());
             row.createCell(6).setCellValue(dto.getBirthdayStr());
         }
-
 
         return wb;
     }

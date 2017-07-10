@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../css/bootstrap.css"/>
     <link rel="stylesheet" href="../css/jquery-ui.css"/>
     <style>
-        .container>div{
+        .container > div {
             margin: 2em 0;
         }
     </style>
@@ -19,10 +19,18 @@
         <a id="export-btn" class="btn btn-primary" href="export.do">导出数据</a>
     </div>
     <div class="row">
-        <form id="search-form">
-            <input name="name"/>
-            <button id="search-btn" type="button">查询</button>
-        </form>
+        <div class="col-lg-6">
+            <form id="search-form">
+                <input name="name"/>
+                <button id="search-btn" type="button">查询</button>
+            </form>
+        </div>
+        <div class="col-lg-6 text-right">
+            <form id="upload-form" class="form-inline" action="importData.do" method="post" enctype="multipart/form-data">
+                <input id="excel-file" class="form-control" name="excelFile" type="file" />
+                <button>上传</button>
+            </form>
+        </div>
     </div>
     <div id="data-area">
         <table class='table'>
@@ -42,30 +50,35 @@
             </tr>
             </thead>
             <tbody>
-                <tr><td class="text-center" colspan="11"><img src="../imgs/loading.gif" alt="Loading..." /></td></tr>
+            <tr>
+                <td class="text-center" colspan="11"><img src="../imgs/loading.gif" alt="Loading..."/></td>
+            </tr>
             </tbody>
             <tfoot>
-                <tr>
-                    <td class="text-right" colspan="11">
+            <tr>
+                <td class="text-right" colspan="11">
                         <span class="col-lg-4">
                             第<span id="pageNo-span"></span>页/共<span id="totalPageNo-span"></span>页
-                            第<span id="first-span"></span>条~第<span id="last-span"></span>条/共<span id="total-span"></span>条
+                            第<span id="first-span"></span>条~第<span id="last-span"></span>条/共<span
+                                id="total-span"></span>条
                         </span>
-                        <span class="col-lg-8 form-inline">
+                    <span class="col-lg-8 form-inline">
                             <span id="to-first-btn" class="btn">首页</span>
                             <span id="to-pre-btn" class="btn">上一页</span>
                             <span id="to-next-btn" class="btn">下一页</span>
                             <span id="to-last-btn" class="btn">未页</span>
-                            <input id="pageNo" name="pageNo" value="1" style="width:4em;" class="form-control" form="search-form" />
-                            <select id="pageSize" name="pageSize" style="width:4em;" class="form-control" form="search-form">
+                            <input id="pageNo" name="pageNo" value="1" style="width:4em;" class="form-control"
+                                   form="search-form"/>
+                            <select id="pageSize" name="pageSize" style="width:4em;" class="form-control"
+                                    form="search-form">
                                 <option value="1">1</option>
                                 <option value="2" selected>2</option>
                                 <option value="5">5</option>
                             </select>
                             <button id="go-btn" type="button" class="btn">Go</button>
                         </span>
-                    </td>
-                </tr>
+                </td>
+            </tr>
             </tfoot>
         </table>
     </div>
@@ -121,7 +134,7 @@
             saveDialog.dialog('open');
         });
 
-        $('tbody','#data-area').on('dblclick','[data-status]',function () {
+        $('tbody', '#data-area').on('dblclick', '[data-status]', function () {
             var status = $(this).data('status');
             $(this).html("<select id='status'>" +
                 "<option value='BM'>报名</option>" +
@@ -134,27 +147,27 @@
             $('#status').val(status);
         });
 
-        $('tbody','#data-area').on('blur','[data-status]',function () {
+        $('tbody', '#data-area').on('blur', '[data-status]', function () {
             var status = $('#status').val();
             var str = $('#status>option:selected').text();
             $(this).html(str);
-            $(this).data('status',status);
+            $(this).data('status', status);
             var id = $(this).parent().children('th').first().children('input').first().val();
 
             $.ajax({
-                url:'changeStatus.do?id='+id+"&status="+status,
-                type:'GET'
-            }).then(function(m){
+                url: 'changeStatus.do?id=' + id + "&status=" + status,
+                type: 'GET'
+            }).then(function (m) {
                 alert(m.message);
-            },function(){
+            }, function () {
                 alert('修改学员状态的请求发送失败');
             });
         });
 
-        $('#delete-btn').on('click',function(){
+        $('#delete-btn').on('click', function () {
             var checkedInput = $('.id-check:checked');
             var ids = [];
-            $.each(checkedInput,function(i,e){
+            $.each(checkedInput, function (i, e) {
                 ids[i] = parseInt($(e).val());
             });
             var idsJson = JSON.stringify(ids);
@@ -162,12 +175,12 @@
                 url: 'delete.do',
                 type: 'POST',
                 dataType: 'json',
-                contentType:'application/json',
+                contentType: 'application/json',
                 data: idsJson
-            }).then(function(m){
+            }).then(function (m) {
                 alert(m.message);
                 list();
-            },function(xhr,status,errorMsg){
+            }, function (xhr, status, errorMsg) {
                 $('#debug').append(xhr.status).append(xhr.responseText);
 //                alert("删除请求发送错误");
             });
@@ -176,57 +189,57 @@
         // 为查询按钮和页码跳转按钮同时绑定单击时的list函数
         $('#search-btn').add('#go-btn').on('click', list);
 
-        $('#to-first-btn').on('click',function(){
+        $('#to-first-btn').on('click', function () {
             // 设置表单中的页码值为1
             $('#pageNo').val(1);
             list();
         });
 
-        $('#to-pre-btn').on('click',function(){
+        $('#to-pre-btn').on('click', function () {
             // 得到页码输入控件
             var input = $('#pageNo');
             // 得到页码当前值，转换为int，再减去1
-            var pNo = parseInt(input.val())-1;
-            if(pNo>0){
+            var pNo = parseInt(input.val()) - 1;
+            if (pNo > 0) {
                 // 把新值设置到页码输入控件上
                 input.val(pNo);
             }
             // 进行查询
             list();
         });
-        $('#to-next-btn').on('click',function(){
+        $('#to-next-btn').on('click', function () {
             var input = $('#pageNo');
             // 得到页码当前值，转换为int，再加上1
-            var pNo = parseInt(input.val())+1;
-            if(pNo<=totalPage){
+            var pNo = parseInt(input.val()) + 1;
+            if (pNo <= totalPage) {
                 // 把新值设置到页码输入控件上
                 input.val(pNo);
             }
             // 进行查询
             list();
         });
-        $('#to-last-btn').on('click',function(){
+        $('#to-last-btn').on('click', function () {
             // 设置表单中的页码值为总页数
             $('#pageNo').val(totalPage);
             list();
         });
 
-        $('#select-all').on('change',function(){
-            $('.id-check').prop('checked',$(this).prop('checked'));
+        $('#select-all').on('change', function () {
+            $('.id-check').prop('checked', $(this).prop('checked'));
             var countChacked = $('.id-check:checked').length;
-            if(countChacked==0){
-                $('#delete-btn').addClass('disabled').prop('disabled',true);
-            }else{
-                $('#delete-btn').removeClass('disabled').prop('disabled',false);
+            if (countChacked == 0) {
+                $('#delete-btn').addClass('disabled').prop('disabled', true);
+            } else {
+                $('#delete-btn').removeClass('disabled').prop('disabled', false);
             }
         });
 
-        $('tbody','#data-area').on('change','.id-check',function () {
+        $('tbody', '#data-area').on('change', '.id-check', function () {
             var countChacked = $('.id-check:checked').length;
-            if(countChacked==0){
-                $('#delete-btn').addClass('disabled').prop('disabled',true);
-            }else{
-                $('#delete-btn').removeClass('disabled').prop('disabled',false);
+            if (countChacked == 0) {
+                $('#delete-btn').addClass('disabled').prop('disabled', true);
+            } else {
+                $('#delete-btn').removeClass('disabled').prop('disabled', false);
             }
         });
     });
@@ -256,12 +269,12 @@
                         "<td>" + stu.tel + "</td>" +
                         "<td>" + stu.address + "</td>" +
                         "<td>" + stu.eduBg + "</td>" +
-                        "<td title='双击可编辑' data-status='"+stu.status+"'>" + stu.statusDes + "</td>" +
+                        "<td title='双击可编辑' data-status='" + stu.status + "'>" + stu.statusDes + "</td>" +
                         "<td>" + stu.registTimeStr + "</td></tr>");
                 });
                 $('#pageNo-span').text(ro.page.pageNo);
                 $('#totalPageNo-span').text(ro.page.totalPage);
-                $('#first-span').text(ro.page.firstResultNum+1);
+                $('#first-span').text(ro.page.firstResultNum + 1);
                 $('#last-span').text(ro.page.lastResultNum);
                 $('#total-span').text(ro.page.totalQuantity);
                 $('tfoot', '#data-area').show();
