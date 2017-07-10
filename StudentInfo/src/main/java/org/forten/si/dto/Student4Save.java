@@ -49,6 +49,8 @@ public class Student4Save {
     }
 
     public void setGender(String gender) {
+        if(gender.equals("女"))gender="F";
+        if(gender.equals("男"))gender="M";
         this.gender = gender;
     }
 

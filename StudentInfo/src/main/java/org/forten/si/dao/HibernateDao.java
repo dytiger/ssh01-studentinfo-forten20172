@@ -39,6 +39,14 @@ public class HibernateDao {
 		getSession().save(entity);
 	}
 
+	public <T> void persist(T entity) {
+		getSession().persist(entity);
+	}
+
+	public <T> void merge(T entity) {
+		getSession().merge(entity);
+	}
+
 	/**
 	 * 更新对象到数据库中
 	 * 
@@ -169,6 +177,10 @@ public class HibernateDao {
 			// e.printStackTrace();
 			return null;
 		}
+	}
+
+	public <T> T findOneBy(String hql){
+		return findOneBy(hql,new HashMap<>(0));
 	}
 
 	public int executeUpdate(String hql,Map<String,Object> params){

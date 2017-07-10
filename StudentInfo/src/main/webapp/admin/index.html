@@ -25,10 +25,18 @@
                 <button id="search-btn" type="button">查询</button>
             </form>
         </div>
-        <div class="col-lg-6 text-right">
+        <!-- 非AJAX上传表单 -->
+        <!--<div class="col-lg-6 text-right">
             <form id="upload-form" class="form-inline" action="importData.do" method="post" enctype="multipart/form-data">
                 <input id="excel-file" class="form-control" name="excelFile" type="file" />
                 <button>上传</button>
+            </form>
+        </div>-->
+        <!-- AJAX上传表单 -->
+        <div class="col-lg-6 text-right">
+            <form id="upload-form" class="form-inline">
+                <input id="excel-file" class="form-control" name="excelFile" type="file" />
+                <button id="upload-btn" type="button">上传</button>
             </form>
         </div>
     </div>
@@ -182,7 +190,25 @@
                 list();
             }, function (xhr, status, errorMsg) {
                 $('#debug').append(xhr.status).append(xhr.responseText);
-//                alert("删除请求发送错误");
+            });
+        });
+
+        // AJAX上传文件
+        $('#upload-btn').on('click',function(){
+            var formData = new FormData();
+            formData.append('excelFile',$('#excel-file')[0].files[0]);
+            $.ajax({
+                url : 'importData.do',
+                type : 'POST',
+                cache : false,
+                data : formData,
+                processData : false,
+                contentType : false
+            }).then(function (m) {
+                list();
+                alert(m.message);
+            },function () {
+                alert('请求发送失败');
             });
         });
 

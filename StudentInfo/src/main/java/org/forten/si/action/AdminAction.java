@@ -92,11 +92,13 @@ public class AdminAction {
     }
 
     @RequestMapping("importData")
-    public String importData(MultipartFile excelFile) throws IOException, InvalidFormatException {
-
-        Workbook wb = WorkbookFactory.create(excelFile.getInputStream());
-        System.out.println(wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-
-        return "index.html";
+    public @ResponseBody Message importData(MultipartFile excelFile) throws IOException, InvalidFormatException {
+        try(Workbook wb = WorkbookFactory.create(excelFile.getInputStream())) {
+            bo.doImport(wb);
+            return new Message("成功导入数据");
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Message("导入数据失败");
+        }
     }
 }

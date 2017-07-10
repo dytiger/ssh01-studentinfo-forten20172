@@ -8,8 +8,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.forten.si.dao.HibernateDao;
 import org.forten.si.dto.*;
 import org.forten.si.entity.Student;
-import org.forten.utils.common.NumberUtil;
-import org.forten.utils.common.StringUtil;
+import org.forten.utils.common.*;
+import org.forten.utils.common.DateUtil;
 import org.forten.utils.security.SHA1Util;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
@@ -299,6 +299,39 @@ public class StudentBo {
         }
 
         return wb;
+    }
+
+    @Transactional
+    public void doImport(Workbook wb){
+        String hql = "SELECT max(id) FROM Student";
+        int maxId = dao.findOneBy(hql);
+
+        Sheet sheet = wb.getSheetAt(0);
+        for(int i = 1;i<=sheet.getLastRowNum();i++){
+            Row row = sheet.getRow(i);
+            String name = row.getCell(0).getStringCellValue();
+            String gender = row.getCell(1).getStringCellValue();
+            String idCardNum = row.getCell(2).getStringCellValue();
+            String email = row.getCell(3).getStringCellValue();
+            String tel = row.getCell(4).getStringCellValue();
+            String address = row.getCell(5).getStringCellValue();
+            String birthday = row.getCell(6).getStringCellValue();
+            String eduBg = row.getCell(7).getStringCellValue();
+
+            Student4Save dto = new Student4Save();
+            dto.setName(name);
+            dto.setGender(gender);
+            dto.setIdCardNum(idCardNum);
+            dto.setEmail(email);
+            dto.setTel(tel);
+            dto.setAddress(address);
+            dto.setBirthday(DateUtil.convertStringToDate(birthday,"yyyy-MM-dd"));
+            dto.setEduBg(eduBg);
+
+            Student stu = new Student(++maxId);
+            BeanPropertyUtil.copy(stu, dto);
+            dao.save(stu);
+        }
     }
 
     private String getRandomStr() {
